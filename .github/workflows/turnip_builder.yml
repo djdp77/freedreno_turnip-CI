@@ -1,4 +1,4 @@
-name: Build "turnip"
+name: Build and Release Turnip
 
 on:
   workflow_dispatch:
@@ -25,4 +25,12 @@ jobs:
         path: |
           turnip_workdir/ninja_log
           turnip_workdir/mesa-main/build-android-aarch64/meson-logs/meson-log.txt
-          turnip_workdir/turnip.zip
+
+    - name: Release "turnip"
+      uses: softprops/action-gh-release@v1
+      with:
+        body: Latest Mesa Main 24.0.0-dev
+        tag_name: workflow_${{github.run_number}}
+        name: Release ${{github.run_number}}
+        files: |
+           turnip_workdir/turnip.zip
