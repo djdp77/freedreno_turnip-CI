@@ -1,0 +1,36 @@
+name: Build and Release Turnip
+
+on:
+  workflow_dispatch:
+
+jobs:
+  start_building_turnip:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Prepare environment
+      run: |
+        sudo sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list
+        sudo apt update
+        sudo apt build-dep mesa -y
+    
+    - name: Execute build script
+      run: bash ./turnip_builder.sh
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: Upload meson and ninja logs for debugging
+        path: |
+          turnip_workdir/ninja_log
+          turnip_workdir/mesa-main/build-android-aarch64/meson-logs/meson-log.txt
+
+    - name: Release "turnip"
+      uses: softprops/action-gh-release@v1
+      with:
+        body: Latest Mesa Main 24.0.0-dev
+        tag_name: workflow_${{github.run_number}}
+        name: Release ${{github.run_number}}
+        files: |
+           turnip_workdir/turnip.zip
