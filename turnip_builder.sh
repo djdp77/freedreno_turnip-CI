@@ -38,6 +38,7 @@ check_deps(){
 
 	echo "Installing python Mako dependency (if missing) ..." $'\n'
 	pip install mako &> /dev/null
+ 	pip install meson --upgrade
 }
 
 
